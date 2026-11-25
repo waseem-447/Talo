@@ -46,6 +46,10 @@
   .brand { position: absolute; left: 50%; top: 42%; width: min(86vw, 1100px); transform: translate(-50%, -50%); direction: ltr; pointer-events: none; }
   .brand svg { display: block; width: 100%; height: auto; overflow: visible; }
   #lgRing { fill: none; stroke: #F59E0B; }
+  #lgGuides { opacity: 0; }
+  /* Silver arrow that travels with you and points at the words */
+  .ptr { position: fixed; left: 0; top: 0; width: 40px; height: 40px; z-index: 40; pointer-events: none; opacity: 0; will-change: transform, opacity;
+    background: linear-gradient(225deg, #E2E8F0, #94A3B8 55%, #64748B); clip-path: polygon(0 0, 100% 0, 100% 100%); filter: drop-shadow(0 0 10px rgba(226,232,240,.35)); }
   .lt { fill: #fff; }
   #lgTag { font-family: "Gilroy", sans-serif; font-weight: 800; fill: #fff; letter-spacing: 2px; }
   @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -153,6 +157,7 @@
 </head>
 <body>
 <button class="lang" id="lang" type="button">العربية</button>
+<div class="ptr" id="ptr" aria-hidden="true"></div>
 <section class="cine" id="cine">
   <div class="view">
     <div class="shake" id="shake">
@@ -182,6 +187,18 @@
             <path class="lt" id="lgA" d="M 685.320312 402 C 685.320312 361.367188 658.234375 335.90625 620.851562 335.90625 C 583.472656 335.90625 556.386719 361.367188 556.386719 402 C 556.386719 442.632812 583.472656 468.09375 620.851562 468.09375 C 658.234375 468.09375 685.320312 442.632812 685.320312 402 M 766.585938 266.558594 L 766.585938 537.441406 L 685.320312 537.441406 L 685.320312 511.980469 C 667.445312 532.566406 640.898438 545.023438 604.601562 545.023438 C 533.628906 545.023438 475.121094 482.722656 475.121094 402 C 475.121094 321.28125 533.628906 258.976562 604.601562 258.976562 C 640.898438 258.976562 667.445312 271.4375 685.320312 292.023438 L 685.320312 266.558594 Z M 766.585938 266.558594 "/>
             <path class="lt" id="lgL" d="M 826.179688 141.957031 L 907.441406 141.957031 L 907.441406 537.441406 L 826.179688 537.441406 Z M 826.179688 141.957031 "/>
             <g id="lgGroup"><path class="lt" d="M 951.25 638.195312 C 951.25 657.066406 936.84375 672.8125 913.503906 672.8125 C 889.269531 672.8125 872.40625 654.832031 872.40625 632.5 C 872.40625 610.164062 889.269531 592.183594 913.058594 592.183594 C 927.574219 592.183594 940.191406 599.777344 946.671875 611.054688 L 941.421875 614.183594 C 936.285156 604.355469 925.339844 597.878906 913.058594 597.878906 C 892.507812 597.878906 878.324219 613.289062 878.324219 632.5 C 878.324219 651.707031 892.507812 667.117188 913.503906 667.117188 C 932.488281 667.117188 943.988281 655.390625 945.21875 640.761719 L 912.050781 640.761719 L 912.050781 635.179688 L 951.25 635.179688 Z M 951.25 638.195312 "/><path class="lt" d="M 972.011719 633.949219 L 996.917969 633.949219 C 1006.40625 633.949219 1014.113281 626.132812 1014.113281 616.527344 C 1014.113281 606.8125 1006.40625 598.996094 996.917969 598.996094 L 972.011719 598.996094 Z M 996.691406 639.53125 L 972.011719 639.53125 L 972.011719 671.585938 L 966.09375 671.585938 L 966.09375 593.414062 L 996.917969 593.414062 C 1009.644531 593.414062 1020.035156 603.796875 1020.035156 616.527344 C 1020.035156 627.136719 1012.773438 636.074219 1002.832031 638.753906 L 1022.265625 671.585938 L 1015.453125 671.585938 Z M 996.691406 639.53125 "/><path class="lt" d="M 1104.785156 632.5 C 1104.785156 613.289062 1089.707031 597.878906 1070.386719 597.878906 C 1051.066406 597.878906 1035.988281 613.289062 1035.988281 632.5 C 1035.988281 651.707031 1051.066406 667.117188 1070.386719 667.117188 C 1089.707031 667.117188 1104.785156 651.707031 1104.785156 632.5 M 1030.074219 632.5 C 1030.074219 610.160156 1047.828125 592.183594 1070.386719 592.183594 C 1092.945312 592.183594 1110.703125 610.160156 1110.703125 632.5 C 1110.703125 654.835938 1092.945312 672.8125 1070.386719 672.8125 C 1047.828125 672.8125 1030.074219 654.835938 1030.074219 632.5 "/><path class="lt" d="M 1123.984375 645.453125 L 1123.984375 593.414062 L 1129.898438 593.414062 L 1129.898438 645.453125 C 1129.898438 658.183594 1137.832031 667.117188 1152.570312 667.117188 C 1167.425781 667.117188 1175.351562 658.183594 1175.351562 645.453125 L 1175.351562 593.414062 L 1181.273438 593.414062 L 1181.273438 645.453125 C 1181.273438 661.980469 1169.769531 672.8125 1152.570312 672.8125 C 1135.371094 672.8125 1123.984375 661.980469 1123.984375 645.453125 "/><path class="lt" d="M 1244.582031 617.644531 C 1244.582031 606.8125 1236.875 598.996094 1226.15625 598.996094 L 1205.496094 598.996094 L 1205.496094 636.183594 L 1226.15625 636.183594 C 1236.875 636.183594 1244.582031 628.367188 1244.582031 617.644531 M 1250.5 617.644531 C 1250.5 631.382812 1240.226562 641.769531 1226.15625 641.769531 L 1205.496094 641.769531 L 1205.496094 671.585938 L 1199.578125 671.585938 L 1199.578125 593.414062 L 1226.15625 593.414062 C 1240.226562 593.414062 1250.5 603.796875 1250.5 617.644531 "/></g>
+          </g>
+          <g id="lgGuides" fill="none" stroke="#CFE0F5" stroke-width="2.5" vector-effect="non-scaling-stroke">
+            <circle class="gd" id="gOut" r="300"/>
+            <circle class="gd" id="gIn" r="142" stroke-dasharray="10 12"/>
+            <circle class="gd" id="gBig" r="430" stroke-dasharray="4 14" opacity=".6"/>
+            <line class="gd" id="gH"/>
+            <line class="gd" id="gV"/>
+            <line class="gd" id="gD"/>
+            <line class="gd" id="gT1"/>
+            <line class="gd" id="gT2"/>
+            <g id="gNodes" fill="#02040c" stroke="#CFE0F5"></g>
+            <g id="gLbl" fill="#CFE0F5" stroke="none" font-family="Gilroy, sans-serif" font-weight="300" font-size="30"></g>
           </g>
           <g mask="url(#lgGap)"><circle id="lgRing" cx="1140" cy="413" r="221" stroke-width="158"/></g>
           <path id="lgO" d="M 1159.359375 402 C 1159.359375 363.535156 1132.269531 338.070312 1097.054688 338.070312 C 1061.839844 338.070312 1034.753906 363.535156 1034.753906 402 C 1034.753906 440.464844 1061.839844 465.929688 1097.054688 465.929688 C 1132.269531 465.929688 1159.359375 440.464844 1159.359375 402 M 953.488281 402 C 953.488281 321.28125 1017.417969 258.976562 1097.054688 258.976562 C 1176.695312 258.976562 1240.621094 321.28125 1240.621094 402 C 1240.621094 482.722656 1176.695312 545.023438 1097.054688 545.023438 C 1017.417969 545.023438 953.488281 482.722656 953.488281 402 " fill="#F59E0B" opacity="0"/>
@@ -392,18 +409,55 @@
   const LOGO = { cx: 1097.2, cy: 402, r: 102.5, w: 81, band: 0, tri: [[428.2,157.9],[511.9,157.9],[511.9,241.6]] };
   const lerp = (a, b, t) => a + (b - a) * t;
   const easeBack = t => { const c = 1.6; return 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2; };
+  // construction guides geometry (follows the icon centre)
+  const G = id => document.getElementById(id);
+  function setLine(el, x1, y1, x2, y2, t) {
+    el.setAttribute('x1', x1); el.setAttribute('y1', y1); el.setAttribute('x2', x2); el.setAttribute('y2', y2);
+    const L = Math.hypot(x2 - x1, y2 - y1); el.style.strokeDasharray = L; el.style.strokeDashoffset = L * (1 - t);
+  }
+  function setCircle(el, cx, cy, t, dashed) {
+    el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+    const L = 2 * Math.PI * +el.getAttribute('r');
+    if (!dashed) { el.style.strokeDasharray = L; el.style.strokeDashoffset = L * (1 - t); }
+    else el.style.opacity = t;
+  }
+  let nodesBuilt = false;
   function paintLogo(p) {
-    const draw = seg(p, 0.012, 0.07);                    // ring drawn in 8 steps ("piece by piece")
-    const steps = 8, stepped = Math.min(steps, Math.floor(draw * steps + (draw > 0 ? 1 : 0))) / steps;
-    const ar = ease(seg(p, 0.062, 0.088));                // arrow slides in
-    const pop = seg(p, 0.088, 0.12);                      // pop / emphasis
-    const m = ease(seg(p, 0.125, 0.2));                   // morph into the logo
+    const cx0 = ICON.cx, cy0 = ICON.cy;
+    // a) blueprint: construction lines draw in, like the guideline's Logo Construction page
+    const g1 = ease(seg(p, 0.004, 0.04)), g2 = ease(seg(p, 0.016, 0.052)), g3 = ease(seg(p, 0.03, 0.06));
+    const gFade = 1 - ease(seg(p, 0.085, 0.115));
+    G('lgGuides').style.opacity = (Math.min(1, g1 * 3) * gFade * 0.75).toFixed(3);
+    setLine(G('gH'), cx0 - 420, cy0, cx0 + 420, cy0, g1);
+    setLine(G('gV'), cx0, cy0 + 420, cx0, cy0 - 420, g1);
+    setCircle(G('gOut'), cx0, cy0, g2, false);
+    setCircle(G('gIn'), cx0, cy0, g2, true);
+    setCircle(G('gBig'), cx0, cy0, g1, true);
+    const tri = ICON.tri;
+    setLine(G('gD'), cx0 - 120, cy0 + 120, tri[2][0] + 70, tri[0][1] - 70, g3);
+    setLine(G('gT1'), tri[0][0] - 60, tri[0][1], tri[1][0] + 60, tri[1][1], g3);
+    setLine(G('gT2'), tri[1][0], tri[1][1] - 60, tri[2][0], tri[2][1] + 60, g3);
+    if (!nodesBuilt || G('gNodes').dataset.cx != cx0) {
+      const pts = [[cx0, cy0], [cx0 - 300, cy0], [cx0 + 300, cy0], [cx0, cy0 - 300], [cx0, cy0 + 300], ...tri];
+      G('gNodes').innerHTML = pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="9" stroke-width="3"/>`).join('');
+      G('gLbl').innerHTML = [['A', tri[0][0] - 40, tri[0][1] - 18], ['B', tri[1][0] + 18, tri[1][1] - 18], ['C', tri[2][0] + 18, tri[2][1] + 34], ['90°', tri[1][0] - 70, tri[1][1] + 46]]
+        .map(q => `<text x="${q[1]}" y="${q[2]}">${q[0]}</text>`).join('');
+      G('gNodes').dataset.cx = cx0; nodesBuilt = true;
+    }
+    G('gNodes').style.opacity = ease(seg(p, 0.03, 0.055));
+    G('gLbl').style.opacity = ease(seg(p, 0.045, 0.065));
+
+    // b) the orange ring fills along the guides (smooth, continuous), arrow lands on the right angle
+    const draw = ease(seg(p, 0.035, 0.08));
+    const ar = ease(seg(p, 0.07, 0.095));
+    const pop = seg(p, 0.095, 0.125);
+    const m = (t => t < .5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2)(seg(p, 0.13, 0.215));
     const cx = lerp(ICON.cx, LOGO.cx, m), cy = lerp(ICON.cy, LOGO.cy, m), r = lerp(ICON.r, LOGO.r, m);
     const C = 2 * Math.PI * r;
     lgRing.setAttribute('cx', cx); lgRing.setAttribute('cy', cy); lgRing.setAttribute('r', r);
     lgRing.setAttribute('stroke-width', lerp(ICON.w, LOGO.w, m));
     lgRing.setAttribute('transform', `rotate(-45 ${cx} ${cy})`);
-    lgRing.style.strokeDasharray = `${C * stepped} ${C}`;
+    lgRing.style.strokeDasharray = `${C * draw} ${C}`;
     lgRing.style.opacity = draw > 0 ? 1 : 0;
     const bw = lerp(ICON.band, LOGO.band, m);
     lgBand.setAttribute('y', -bw / 2); lgBand.setAttribute('height', bw);
@@ -411,21 +465,74 @@
     const done = m > 0.995;
     lgO.setAttribute('opacity', done ? 1 : 0); lgRing.style.visibility = done ? 'hidden' : 'visible';
     const pts = ICON.tri.map((q, i) => [lerp(q[0], LOGO.tri[i][0], m), lerp(q[1], LOGO.tri[i][1], m)]);
-    const off = (1 - ar) * 90;
+    const off = (1 - ar) * 140;
     lgArrow.setAttribute('points', pts.map(q => `${(q[0] - off).toFixed(1)},${(q[1] + off).toFixed(1)}`).join(' '));
-    lgArrow.style.opacity = ar;
-    const k = 1 + 0.16 * Math.sin(Math.PI * pop);
+    lgArrow.style.opacity = ar * (ptrLive ? 0 : 1);
+    const k = 1 + 0.12 * Math.sin(Math.PI * pop) ** 2;
     lgPop.setAttribute('transform', `translate(${cx} ${cy}) scale(${k.toFixed(4)}) translate(${-cx} ${-cy})`);
-    lgPop.setAttribute('filter', pop > 0 && pop < 1 ? 'url(#lgGlow)' : '');
+    lgPop.setAttribute('filter', pop > 0.02 && pop < 0.98 ? 'url(#lgGlow)' : '');
+
+    // c) letters rise smoothly into place, then GROUP and the line
     lgLet.forEach((el, i) => {
-      const t = easeBack(seg(p, 0.15 + i * 0.012, 0.19 + i * 0.012));
-      el.style.opacity = clamp(t); el.style.transform = `translateY(${(60 * (1 - t)).toFixed(1)}px)`;
+      const t = easeOut(seg(p, 0.16 + i * 0.014, 0.205 + i * 0.014));
+      el.style.opacity = t.toFixed(3); el.style.transform = `translateY(${(70 * (1 - t)).toFixed(1)}px)`;
     });
-    lgGroup.forEach((el, i) => { el.style.opacity = ease(seg(p, 0.19 + i * 0.005, 0.205 + i * 0.005)); });
-    lgTagG.setAttribute('opacity', ease(seg(p, 0.2, 0.235)).toFixed(3));
-    const tg = ease(seg(p, 0.2, 0.235));
+    lgGroup.forEach((el, i) => { const t = easeOut(seg(p, 0.2 + i * 0.004, 0.222 + i * 0.004)); el.style.opacity = t.toFixed(3); el.style.transform = `translateY(${(20 * (1 - t)).toFixed(1)}px)`; });
+    const tg = easeOut(seg(p, 0.208, 0.24));
+    lgTagG.setAttribute('opacity', tg.toFixed(3));
     lgTagG.setAttribute('transform', ICON.cx === 735 ? `translate(0 ${(30 * (1 - tg)).toFixed(1)})` : `translate(${(-40 * (1 - tg)).toFixed(1)} 0)`);
   }
+
+  // ---- Silver arrow: leaves the logo and travels with you, pointing at the words ----
+  const ptr = $('ptr');
+  let ptrLive = false, px = 0, py = 0, ps = 40, po = 0, bob = 0;
+  function ptrTarget() {
+    const P = seg(p, 0.25, 1), rtl = document.documentElement.dir === 'rtl';
+    const pick = el => { if (!el) return null; const rs = el.getClientRects(); return rs.length ? (rtl ? rs[0] : rs[0]) : null; };
+    let el = null;
+    if (P > 0.12 && P < 0.36) el = document.querySelector('#intro .hl');
+    else if (P > 0.9 && p >= 0.999 * 0 && q < 0.02) el = document.querySelector('#land .hl');
+    if (q > 0.0 && q < 1.0001) {
+      const N = scenes.length; const i = Math.min(N - 1, Math.floor(q * N + 0.0001));
+      const t = q * N - i;
+      if (q > 0.001 && t > 0.2 && (t < 0.8 || scenes[i].last)) el = scenes[i].cta || scenes[i].hl;
+      else if (q > 0.001) el = null;
+    }
+    if (!el) return null;
+    const r = pick(el);
+    if (!r || r.width === 0) return null;
+    const size = Math.max(26, Math.min(44, r.height * 0.75));
+    return rtl ? { x: r.right + 12, y: r.bottom - size * 0.4, s: size, flip: true } : { x: r.left - 12 - size, y: r.bottom - size * 0.4, s: size, flip: false };
+  }
+  function paintPtr(dt) {
+    if (still) { ptr.style.opacity = 0; return; }
+    const P = seg(p, 0.25, 1);
+    const logoDone = p >= 0.245;
+    if (!logoDone) {                                   // still part of the logo
+      if (ptrLive) { ptrLive = false; }
+      ptr.style.opacity = 0;
+      const b = lgArrow.getBoundingClientRect(); px = b.left; py = b.top; ps = b.width; po = 0;
+      return;
+    }
+    if (!ptrLive) { const b = lgArrow.getBoundingClientRect(); px = b.left; py = b.top; ps = b.width; ptrLive = true; }
+    const T = ptrTarget();
+    const falling = P > 0.36 && P < 0.9 && q < 0.001;
+    let tx, ty, ts, to;
+    if (T && !falling) { tx = T.x; ty = T.y; ts = T.s; to = 1; }
+    else if (P < 0.12) { const b = lgArrowHome(); tx = b.x; ty = b.y; ts = b.s; to = 1 - ease(seg(P, 0.02, 0.09)) * 0.0; }
+    else { tx = px; ty = py - 20; ts = ps; to = 0; }
+    const k = Math.min(1, 0.09 * dt);
+    px += (tx - px) * k; py += (ty - py) * k; ps += (ts - ps) * k; po += (to - po) * Math.min(1, 0.12 * dt);
+    bob += 0.06 * dt;
+    const nudge = T && !falling ? Math.max(0, Math.sin(bob)) * 6 : 0;   // little "pointing" tap
+    const flip = T && T.flip;
+    ptr.style.width = ps.toFixed(1) + 'px'; ptr.style.height = ps.toFixed(1) + 'px';
+    ptr.style.transform = `translate(${(px + (flip ? -nudge : nudge)).toFixed(1)}px, ${(py - nudge).toFixed(1)}px) scaleX(${flip ? -1 : 1})`;
+    ptr.style.opacity = po.toFixed(3);
+  }
+  // while the logo is on screen, the arrow sits on the T (and follows the logo as it leaves)
+  function lgArrowHome() { const b = lgArrow.getBoundingClientRect(); return { x: b.left, y: b.top, s: b.width }; }
+
   function paint(dt) { paintLogo(p); paintOld(dt, seg(p, 0.25, 1)); }
 
   let last = performance.now();
@@ -435,7 +542,7 @@
     if (Math.abs(target - p) < 0.0002) p = target;
     q += (qt - q) * (still ? 1 : Math.min(1, 0.1 * dt));
     if (Math.abs(qt - q) < 0.0002) q = qt;
-    paint(dt); paintStory();
+    paint(dt); paintStory(); paintPtr(dt);
     requestAnimationFrame(loop);
   }
 
