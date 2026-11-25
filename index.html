@@ -27,7 +27,7 @@
     transform: translate(-50%, -50%);
   }
   /* Sky: real star positions from the Hipparcos catalogue + Milky Way outline */
-  .sky { position: absolute; inset: -6%; background: url("assets/space.jpg") center / cover no-repeat; will-change: transform, filter; }
+  .sky { position: absolute; inset: -6%; background: url("assets/space.webp") center / cover no-repeat; will-change: transform, filter; }
   .gw { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
   .globe { position: absolute; inset: 0; width: 100%; height: 100%; animation: rise 2.4s cubic-bezier(.2,.7,.1,1) both; }
   @keyframes rise { from { transform: translateY(40%); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -39,7 +39,7 @@
   .flash { position: absolute; inset: 0; background: #fff6e6; opacity: 0; pointer-events: none; }
 
   /* Landing: the construction site seen from above */
-  .site { position: absolute; inset: 0; opacity: 0; background: url("assets/site.jpg") center / cover no-repeat; will-change: transform, opacity; }
+  .site { position: absolute; inset: 0; opacity: 0; background: url("assets/site.webp") center / cover no-repeat; will-change: transform, opacity; }
   .site::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(17,43,78,0) 55%, #112B4E 100%), radial-gradient(ellipse 60% 40% at 50% 50%, rgba(17,43,78,.78), rgba(17,43,78,.35) 70%), linear-gradient(rgba(17,43,78,.6), rgba(17,43,78,.2) 50%, rgba(17,43,78,.6)); }
 
   /* Opening mark: icon draws itself, pops, then becomes the full Talo Group logo */
@@ -51,6 +51,12 @@
   .ptr { position: fixed; left: 0; top: 0; width: 40px; height: 40px; z-index: 40; pointer-events: none; opacity: 0; will-change: transform, opacity; transform-origin: 50% 50%;
     background: #94A3B8; clip-path: polygon(0 0, 100% 0, 100% 100%); }
   .ptrTrail { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 39; pointer-events: none; }
+  @media (max-width: 900px), (pointer: coarse) {
+    .sky { background-image: url("assets/space-m.webp"); will-change: transform; }
+    .site { background-image: url("assets/site-m.webp"); }
+    .grain { display: none; }
+    .heat { mix-blend-mode: normal; }
+  }
   .lt { fill: #fff; }
   #lgTag { font-family: "Gilroy", sans-serif; font-weight: 800; fill: #fff; letter-spacing: 2px; }
   @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -164,7 +170,7 @@
     <div class="shake" id="shake">
       <div class="stage" id="stage">
         <div class="sky" id="sky"></div>
-        <div class="gw" id="gw"><img class="globe" id="globe" src="assets/globe.png" alt=""></div>
+        <div class="gw" id="gw"><img class="globe" id="globe" src="assets/globe.webp" decoding="async" alt=""></div>
       </div>
       <canvas class="streaks" id="streaks"></canvas>
       <div class="site" id="site"></div>
@@ -219,10 +225,10 @@
     </div>
 
     <div class="cards">
-      <div class="card c1" data-r="-3"><span class="tape"></span><img src="assets/s-kafd.jpg" alt=""></div>
-      <div class="card c2 navy" data-r="2.5"><span class="tape"></span><img src="assets/s-crane.jpg" alt=""></div>
-      <div class="card c3" data-r="-2"><span class="tape"></span><img src="assets/s-scafOR.jpg" alt=""></div>
-      <div class="card c4 navy" data-r="3"><span class="tape"></span><img src="assets/s-aerialOR.jpg" alt=""></div>
+      <div class="card c1" data-r="-3"><span class="tape"></span><img loading="lazy" decoding="async" src="assets/s-kafd.webp" alt=""></div>
+      <div class="card c2 navy" data-r="2.5"><span class="tape"></span><img loading="lazy" decoding="async" src="assets/s-crane.webp" alt=""></div>
+      <div class="card c3" data-r="-2"><span class="tape"></span><img loading="lazy" decoding="async" src="assets/s-scafOR.webp" alt=""></div>
+      <div class="card c4 navy" data-r="3"><span class="tape"></span><img loading="lazy" decoding="async" src="assets/s-aerialOR.webp" alt=""></div>
     </div>
 
     <div class="say mid" id="land">
@@ -244,29 +250,29 @@
     </div>
 
     <div class="scene">
-      <div class="ph" data-r="-2.5"><span class="tape"></span><img src="assets/s-scafOR.jpg" alt="Scaffolding on a construction site"></div>
+      <div class="ph" data-r="-2.5"><span class="tape"></span><img loading="lazy" decoding="async" src="assets/s-scafOR.webp" alt="Scaffolding on a construction site"></div>
       <div class="txt">
-        <div class="mname"><img src="assets/iconC-Engine.png" alt="">Talo Engine</div>
+        <div class="mname"><img src="assets/iconC-Engine-s.png" alt="">Talo Engine</div>
         <h2 data-k="s1H"><b>Plan and match.</b><span class="hl">The right crew, every phase.</span></h2>
         <p data-k="s1P">AI estimates each crew and matches verified workers by trade, phase and site. Workers deployed in hours, not weeks.</p>
       </div>
     </div>
 
     <div class="scene flip">
-      <div class="ph navyS" data-r="2"><span class="tape"></span><img src="assets/s-crane13.jpg" alt="Tower crane"></div>
+      <div class="ph navyS" data-r="2"><span class="tape"></span><img loading="lazy" decoding="async" src="assets/s-crane13.webp" alt="Tower crane"></div>
       <div class="txt">
-        <div class="mname"><img src="assets/iconC-Link.png" alt="">Talo Link</div>
+        <div class="mname"><img src="assets/iconC-Link-s.png" alt="">Talo Link</div>
         <h2 data-k="s2H"><b>Verified field talent.</b><span class="hl">Booked when you need it.</span></h2>
         <p data-k="s2P">Book verified freelancers for short-term needs, with Iqama and permits checked.</p>
       </div>
     </div>
 
     <div class="scene">
-      <div class="ph" data-r="-1.5"><span class="tape"></span><img src="assets/fund-build.jpg" alt="Building under construction">
+      <div class="ph" data-r="-1.5"><span class="tape"></span><img loading="lazy" decoding="async" src="assets/fund-build.webp" alt="Building under construction">
         <div class="coins"><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <div class="txt">
-        <div class="mname"><img src="assets/iconC-Fund.png" alt="">Talo Fund</div>
+        <div class="mname"><img src="assets/iconC-Fund-s.png" alt="">Talo Fund</div>
         <h2 data-k="s3H"><b>Liquidity on invoices.</b><span class="hl">Pay wages before clients pay.</span></h2>
         <p data-k="s3P">Finance approved invoices in the platform, with offers from reviewing funders.</p>
       </div>
@@ -293,6 +299,7 @@
   const cards = [...document.querySelectorAll('.card')];
   const cv = $('streaks'), cx = cv.getContext('2d');
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lite = matchMedia('(max-width: 900px), (pointer: coarse)').matches;   // phones & tablets: skip the costly effects
 
   const clamp = v => Math.min(1, Math.max(0, v));
   const seg = (p, a, b) => clamp((p - a) / (b - a));
@@ -302,9 +309,9 @@
 
   // Warp-line particles for the fall
   const parts = [];
-  for (let i = 0; i < 260; i++) parts.push({ a: Math.random() * Math.PI * 2, r: Math.random(), s: .4 + Math.random() * .9, w: Math.random() < .15 ? 2 : 1 });
+  for (let i = 0, n = lite ? 110 : 260; i < n; i++) parts.push({ a: Math.random() * Math.PI * 2, r: Math.random(), s: .4 + Math.random() * .9, w: Math.random() < .15 ? 2 : 1 });
   function sizeCanvas() {
-    const d = Math.min(devicePixelRatio || 1, 2);
+    const d = lite ? 1 : Math.min(devicePixelRatio || 1, 2);
     cv.width = innerWidth * d; cv.height = innerHeight * d; cx.setTransform(d, 0, 0, d, 0, 0);
   }
 
@@ -343,14 +350,14 @@
     const s2 = 1 + 7 * fz;
     const kx = W * 0.53, ky = H * 0.5, bx = W * 0.4975, by = H;
     gw.style.transform = `translate(${kx}px,${ky}px) scale(${s2}) translate(${-kx}px,${-ky}px) translate(${bx}px,${by}px) scale(${s1}) translate(${-bx}px,${-by}px)`;
-    globe.style.filter = fz > 0.001 ? `blur(${(fz * 2.5).toFixed(2)}px) brightness(${(1 + fz * .2).toFixed(3)})` : 'none';
+    globe.style.filter = !lite && fz > 0.001 ? `blur(${(fz * 2.5).toFixed(2)}px) brightness(${(1 + fz * .2).toFixed(3)})` : 'none';
     sky.style.transform = `scale(${(1 + fz * 1.2).toFixed(4)})`;
-    sky.style.filter = fz > 0.001 ? `blur(${(fz * 3).toFixed(2)}px)` : 'none';
+    sky.style.filter = !lite && fz > 0.001 ? `blur(${(fz * 3).toFixed(2)}px)` : 'none';
     sky.style.opacity = (1 - fz * .6).toFixed(3);
 
     const heatV = Math.sin(Math.PI * seg(p, 0.5, 0.8));
     heat.style.opacity = (heatV * 0.95).toFixed(3);
-    $('grain').style.opacity = (0.55 * Math.sin(Math.PI * seg(p, 0.42, 0.82))).toFixed(3);
+    if (!lite) $('grain').style.opacity = (0.55 * Math.sin(Math.PI * seg(p, 0.42, 0.82))).toFixed(3);
     flash.style.opacity = Math.max(0, 1 - Math.abs(p - 0.775) / 0.035).toFixed(3);
 
     const amp = still ? 0 : 14 * Math.sin(Math.PI * seg(p, 0.48, 0.8)) ** 1.5;
@@ -377,7 +384,7 @@
     const L = seg(p, 0.64, 0.93);
     site.style.opacity = ease(seg(p, 0.64, 0.79)).toFixed(3);
     site.style.transform = `scale(${(1 + 3 * (1 - easeOut(L))).toFixed(4)})`;
-    site.style.filter = p < 0.8 ? `blur(${(4 * (1 - seg(p, 0.64, 0.8))).toFixed(2)}px)` : 'none';
+    site.style.filter = !lite && p < 0.8 ? `blur(${(4 * (1 - seg(p, 0.64, 0.8))).toFixed(2)}px)` : 'none';
     const lt = ease(seg(p, 0.86, 0.93));
     land.style.opacity = lt;
     land.style.transform = `translate(-50%, calc(-50% + ${(30 * (1 - lt)).toFixed(1)}px))`;
@@ -489,7 +496,7 @@
   const trail = $('ptrTrail'), tctx = trail.getContext('2d');
   let ptrLive = false, px = 0, py = 0, vx = 0, vy = 0, ps = 40, po = 0, ang = 0, bob = 0, wand = 0;
   const pts = [];
-  function sizeTrail() { const d = Math.min(2, devicePixelRatio || 1); trail.width = innerWidth * d; trail.height = innerHeight * d; tctx.setTransform(d, 0, 0, d, 0, 0); }
+  function sizeTrail() { const d = lite ? Math.min(1.5, devicePixelRatio || 1) : Math.min(2, devicePixelRatio || 1); trail.width = innerWidth * d; trail.height = innerHeight * d; tctx.setTransform(d, 0, 0, d, 0, 0); }
   sizeTrail(); addEventListener('resize', sizeTrail);
   function ptrTarget() {
     const P = seg(p, 0.25, 1), rtl = document.documentElement.dir === 'rtl';
@@ -523,20 +530,22 @@
     for (let i = 1; i < pts.length; i++) tctx.lineTo(pts[i].x, pts[i].y);
     tctx.stroke(); tctx.setLineDash([]);
   }
+  let ptrT = null, arrowBox = null;
+  function readPtr() { arrowBox = lgArrow.getBoundingClientRect(); ptrT = p >= 0.245 ? ptrTarget() : null; }
   function paintPtr(dt) {
     if (still) { ptr.style.opacity = 0; trail.style.opacity = 0; return; }
     const P = seg(p, 0.25, 1);
     if (p < 0.245) {                                   // still part of the logo
       ptrLive = false; ptr.style.opacity = 0; po = 0; pts.length = 0; drawTrail();
-      const b = lgArrow.getBoundingClientRect(); px = b.left + b.width / 2; py = b.top + b.height / 2; ps = b.width; vx = vy = 0; ang = 0;
+      const b = arrowBox; px = b.left + b.width / 2; py = b.top + b.height / 2; ps = b.width; vx = vy = 0; ang = 0;
       return;
     }
-    if (!ptrLive) { const b = lgArrow.getBoundingClientRect(); px = b.left + b.width / 2; py = b.top + b.height / 2; ps = b.width; vx = 6; vy = -6; po = 0; ptrLive = true; }
-    const T = ptrTarget();
+    if (!ptrLive) { const b = arrowBox; px = b.left + b.width / 2; py = b.top + b.height / 2; ps = b.width; vx = 6; vy = -6; po = 0; ptrLive = true; }
+    const T = ptrT;
     const falling = P > 0.36 && P < 0.9 && q < 0.001;
     wand += 0.012 * dt; bob += 0.045 * dt;
     let tx, ty, ts, to;
-    if (T && !falling) { tx = T.x; ty = T.y + Math.sin(bob) * 1.5; ts = T.s; to = 1; }
+    if (T && !falling) { tx = T.x; ty = T.y; ts = T.s; to = 1; }
     else if (falling) {                                 // rides the dive with you, then fades
       tx = innerWidth * 0.5 + Math.sin(wand * 3) * innerWidth * 0.12; ty = innerHeight * 0.78; ts = ps; to = 1 - ease(seg(P, 0.5, 0.62));
     } else {                                            // nothing to point at: cruise freely
@@ -576,13 +585,20 @@
   function paint(dt) { paintLogo(p); paintOld(dt, seg(p, 0.25, 1)); }
 
   let last = performance.now();
+  let lastP = -1, lastQ = -1, idle = 0;
+  const ptrBusy = () => ptrLive && (Math.hypot(vx, vy) > 0.03 || Math.abs(po - Math.round(po)) > 0.01 || pts.length > 0);
+  addEventListener('resize', () => { idle = 0; });
   function loop(now) {
     const dt = Math.min(3, (now - last) / 16.7); last = now;
     p += (target - p) * (still ? 1 : Math.min(1, 0.1 * dt));
     if (Math.abs(target - p) < 0.0002) p = target;
     q += (qt - q) * (still ? 1 : Math.min(1, 0.1 * dt));
     if (Math.abs(qt - q) < 0.0002) q = qt;
-    paint(dt); paintStory(); paintPtr(dt);
+    const scrolled = p !== target || q !== qt || p !== lastP || q !== lastQ;
+    lastP = p; lastQ = q;
+    if (scrolled || idle < 3) { readPtr(); paint(dt); paintStory(); paintPtr(dt); }
+    else if (ptrBusy()) { readPtr(); paintPtr(dt); }      // only the arrow is still flying
+    idle = scrolled ? 0 : idle + 1;
     requestAnimationFrame(loop);
   }
 
