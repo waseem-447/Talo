@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talo Group</title>
+<style>
+  @font-face { font-family: "Gilroy"; src: url("assets/Gilroy-ExtraBold.otf") format("opentype"); font-weight: 800; }
+  @font-face { font-family: "Gilroy"; src: url("assets/Gilroy-Light.otf") format("opentype"); font-weight: 300; }
+  @font-face { font-family: "Plex Arabic"; src: url("assets/IBMPlexSansArabic-Bold.ttf") format("truetype"); font-weight: 800; }
+  @font-face { font-family: "Plex Arabic"; src: url("assets/IBMPlexSansArabic-Regular.ttf") format("truetype"); font-weight: 300; }
+  @property --hl { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
+  :root { --navy: #112B4E; --orange: #F59E0B; --paper: #F3F0E9; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #112B4E; }
+  body { overflow-x: clip; font-family: "Gilroy", sans-serif; color: #fff; }
+
+  /* ---------- Cinematic part: pinned while you scroll ---------- */
+  .cine { position: relative; height: 1100vh; }
+  .view { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  .shake { position: absolute; inset: 0; will-change: transform; }
+
+  .stage {
+    position: absolute; left: 50%; top: 50%;
+    width: max(100vw, calc(100vh * 1578 / 886));
+    height: max(100vh, calc(100vw * 886 / 1578));
+    transform: translate(-50%, -50%);
+  }
+  /* Sky: real star positions from the Hipparcos catalogue + Milky Way outline */
+  .sky { position: absolute; inset: -6%; background: url("assets/space.jpg") center / cover no-repeat; will-change: transform, filter; }
+  .gw { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
+  .globe { position: absolute; inset: 0; width: 100%; height: 100%; animation: rise 2.4s cubic-bezier(.2,.7,.1,1) both; }
+  @keyframes rise { from { transform: translateY(40%); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  canvas.streaks { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .heat { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(ellipse at 50% 55%, rgba(255,255,255,0) 30%, rgba(245,158,11,.35) 62%, rgba(255,96,10,.85) 100%); mix-blend-mode: screen; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: 0; mix-blend-mode: overlay; background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  .flash { position: absolute; inset: 0; background: #fff6e6; opacity: 0; pointer-events: none; }
+
+  /* Landing: the construction site seen from above */
+  .site { position: absolute; inset: 0; opacity: 0; background: url("assets/site.jpg") center / cover no-repeat; will-change: transform, opacity; }
+  .site::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(17,43,78,0) 55%, #112B4E 100%), radial-gradient(ellipse 60% 40% at 50% 50%, rgba(17,43,78,.78), rgba(17,43,78,.35) 70%), linear-gradient(rgba(17,43,78,.6), rgba(17,43,78,.2) 50%, rgba(17,43,78,.6)); }
+
+  .brand { position: absolute; left: 50%; top: max(9vh, 64px); transform: translateX(-50%); }
+  .brand-in { display: flex; align-items: center; gap: 2.2vw; animation: fade 1.6s ease .6s both; }
+  .brand img { height: clamp(56px, 9vw, 130px); }
+  .brand .tag { border-left: 2px solid rgba(255,255,255,.85); padding-left: 1.6vw; font-weight: 800; font-size: clamp(11px, 1.15vw, 18px); line-height: 1.35; letter-spacing: .04em; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  .shade { position: absolute; inset: 0 0 auto 0; height: 45vh; background: linear-gradient(#02040ccc, #02040c00); opacity: 0; pointer-events: none; }
+
+  /* Talo headline style: ExtraBold line + Light line with orange highlight */
+  .say { position: absolute; left: 50%; top: max(8vh, 70px); width: min(max(900px, 60vw), 88vw); transform: translateX(-50%); text-align: center; opacity: 0; }
+  .say.mid { top: 50%; }
+  h1, h2 { font-size: clamp(28px, min(4.6vw, 7.4vh), 84px); line-height: 1.12; letter-spacing: -.01em; }
+  h1 b, h2 b { display: block; font-weight: 800; }
+  .hl { font-weight: 300; padding: 0 .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+    background: linear-gradient(rgba(245,158,11,.7), rgba(245,158,11,.7)) no-repeat 0 88% / var(--hl, 0%) 58%; }
+  .lead { margin: 18px auto 0; max-width: max(580px, 38vw); font-weight: 300; font-size: clamp(15px, min(1.45vw, 2.4vh), 26px); line-height: 1.6; color: rgba(255,255,255,.86); }
+
+  /* Paper cut-out photo cards (Talo poster style) */
+  .cards { position: absolute; inset: 0; pointer-events: none; }
+  .card { position: absolute; background: var(--paper); padding: 8px; box-shadow: 14px 14px 0 var(--orange); opacity: 0; will-change: transform, opacity; }
+  .card img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .tape { position: absolute; left: 50%; top: -14px; width: 86px; height: 26px; margin-left: -43px; background: rgba(243,240,233,.78); transform: rotate(-4deg); }
+  .card.navy { box-shadow: 14px 14px 0 var(--navy); }
+  .c1 { left: 5vw;  top: 44vh; width: 25vw; aspect-ratio: 1280/780; }
+  .c2 { left: 33vw; top: 52vh; width: 15vw; aspect-ratio: 4/5; }
+  .c3 { left: 52vw; top: 47vh; width: 18vw; aspect-ratio: 1/1; }
+  .c4 { left: 73vw; top: 40vh; width: 22vw; aspect-ratio: 1180/900; }
+
+  /* ---------- Story part: pinned scenes, same scroll behaviour as above ---------- */
+  .story { position: relative; height: 640vh; }
+  .sview { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: var(--navy); }
+  .pat { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: .5;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%, transparent 88%); mask-image: linear-gradient(180deg, transparent 0%, #000 30%, transparent 88%); }
+  .pat path { fill: none; stroke: #3E5679; stroke-width: 22; }
+  .scene { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 6vw; padding: 0 8vw; pointer-events: none; }
+  .scene.flip .ph { order: 2; }
+  .scene.center { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .scene .txt { opacity: 0; max-width: max(560px, 34vw); will-change: transform, opacity; }
+  .scene.center .txt { max-width: max(900px, 60vw); }
+  .scene h2 { font-size: clamp(26px, min(3.8vw, 6.4vh), 74px); }
+  .scene.center h2 { font-size: clamp(28px, min(4.6vw, 7.4vh), 84px); }
+  .scene p { margin-top: 16px; font-weight: 300; font-size: clamp(15px, min(1.35vw, 2.3vh), 24px); line-height: 1.65; color: rgba(255,255,255,.86); }
+  .mname { display: flex; align-items: center; gap: 14px; font-weight: 800; font-size: 18px; letter-spacing: .02em; color: var(--orange); margin-bottom: 14px; }
+  .mname img { width: 40px; height: 40px; object-fit: contain; }
+  .ph { position: relative; justify-self: center; width: min(100%, max(420px, 62vh)); aspect-ratio: 4/3; background: var(--paper); padding: 10px; box-shadow: 16px 16px 0 var(--orange); opacity: 0; will-change: transform, opacity; }
+  .ph.navyS { box-shadow: 16px 16px 0 #0a1a31; }
+  .ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .ph .tape { top: -16px; }
+  /* coin stack, as in the Talo Fund LinkedIn post */
+  .coins { position: absolute; right: -9%; bottom: -10%; width: 34%; display: flex; flex-direction: column-reverse; }
+  .coins i { display: block; width: 100%; aspect-ratio: 3.2/1; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #FBBF3C, #F59E0B 60%); border-bottom: 5px solid #B8740A; margin-top: -13%; box-shadow: 0 3px 0 rgba(10,26,49,.6); will-change: transform, opacity; }
+  .cta { display: inline-block; margin-top: 30px; font-weight: 800; font-size: 18px; color: var(--navy); background: var(--orange); padding: 14px 26px; text-decoration: none; box-shadow: 8px 8px 0 var(--paper); }
+  .cta:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+  .scene small { display: block; margin-top: 18px; font-weight: 300; font-size: 15px; color: rgba(255,255,255,.7); }
+  .credit { font-weight: 300; font-size: 12px; color: rgba(255,255,255,.45); text-align: center; padding: 18px 18px 26px; background: var(--navy); }
+
+  /* Language switch */
+  .lang { position: fixed; top: 18px; right: 18px; z-index: 50; min-height: 44px; padding: 0 18px; border: 1px solid rgba(255,255,255,.55); background: rgba(17,43,78,.55); color: #fff; font: 800 15px/1 "Plex Arabic", "Gilroy", sans-serif; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .lang:hover { background: var(--orange); color: var(--navy); border-color: var(--orange); }
+  .lang:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+  html[lang=en] .lang { font-family: "Plex Arabic", sans-serif; }
+  html[lang=ar] .lang { font-family: "Gilroy", sans-serif; }
+  /* Arabic: IBM Plex Sans Arabic (brand Arabic face), right-to-left, highlight sweeps from the right */
+  html[lang=ar] body, html[lang=ar] .say, html[lang=ar] .scene { font-family: "Plex Arabic", sans-serif; }
+  html[lang=ar] h1, html[lang=ar] h2 { letter-spacing: 0; line-height: 1.35; }
+  html[lang=ar] .hl { background-position: 100% 88%; }
+  html[lang=ar] .lead, html[lang=ar] .scene p { line-height: 1.85; }
+  html[lang=ar] .mname { letter-spacing: 0; }
+  .brand { direction: ltr; }
+
+  @media (max-width: 700px), (orientation: portrait) and (max-width: 1100px) {
+    .card { padding: 6px; box-shadow: 9px 9px 0 var(--orange); }
+    .card.navy { box-shadow: 9px 9px 0 var(--navy); }
+    .tape { width: 60px; height: 20px; margin-left: -30px; top: -10px; }
+    .c1 { left: 6vw;  top: 40vh; width: 42vw; aspect-ratio: 4/3; }
+    .c2 { left: 54vw; top: 42vh; width: 38vw; aspect-ratio: 4/3; }
+    .c3 { left: 8vw;  top: 63vh; width: 38vw; aspect-ratio: 4/3; }
+    .c4 { left: 52vw; top: 65vh; width: 42vw; aspect-ratio: 4/3; }
+    .scene { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 44px; padding: 0 7vw; }
+    .scene.flip .ph { order: 0; }
+    .ph { width: min(78vw, 360px); box-shadow: 10px 10px 0 var(--orange); }
+    .ph.navyS { box-shadow: 10px 10px 0 #0a1a31; }
+  }
+  @media (orientation: portrait) and (min-width: 701px) and (max-width: 1100px) {
+    .c1 { left: 7vw;  top: 42vh; width: 40vw; } .c2 { left: 54vw; top: 43vh; width: 36vw; }
+    .c3 { left: 9vw;  top: 64vh; width: 36vw; } .c4 { left: 52vw; top: 65vh; width: 40vw; }
+    .ph { width: min(64vw, 520px); }
+    .scene { gap: 56px; padding: 0 10vw; }
+    .scene h2, h1, h2 { font-size: clamp(34px, 5.6vw, 60px); }
+    .scene p, .lead { font-size: clamp(17px, 2.3vw, 22px); }
+    .mname { font-size: 20px; } .mname img { width: 46px; height: 46px; }
+  }
+  /* phones held sideways and other short screens */
+  @media (max-height: 520px) and (orientation: landscape) {
+    .say { top: 14px; }
+    .brand { top: 16px; }
+    .brand img { height: 48px; }
+    .lead { margin-top: 8px; }
+    .c1, .c2, .c3, .c4 { top: 50vh; width: 18vw; aspect-ratio: 4/3; }
+    .c1 { left: 6vw; } .c2 { left: 30vw; } .c3 { left: 54vw; } .c4 { left: 76vw; }
+    .card { padding: 5px; box-shadow: 7px 7px 0 var(--orange); }
+    .scene { gap: 5vw; padding: 0 7vw; }
+    .ph { width: min(100%, 58vh * 1.33); padding: 6px; box-shadow: 9px 9px 0 var(--orange); }
+    .mname { margin-bottom: 6px; font-size: 14px; } .mname img { width: 28px; height: 28px; }
+    .scene p { margin-top: 8px; }
+    .lang { top: 10px; right: 10px; min-height: 36px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .globe, .brand-in { animation: none; }  }
+</style>
+</head>
+<body>
+<button class="lang" id="lang" type="button">العربية</button>
+<section class="cine" id="cine">
+  <div class="view">
+    <div class="shake" id="shake">
+      <div class="stage" id="stage">
+        <div class="sky" id="sky"></div>
+        <div class="gw" id="gw"><img class="globe" id="globe" src="assets/globe.png" alt=""></div>
+      </div>
+      <canvas class="streaks" id="streaks"></canvas>
+      <div class="site" id="site"></div>
+      <div class="heat" id="heat"></div>
+      <div class="grain" id="grain"></div>
+      <div class="flash" id="flash"></div>
+    </div>
+
+    <div class="brand" id="brand"><div class="brand-in">
+      <img src="assets/Talo-Logo-White.svg" alt="Talo Group">
+      <div class="tag">INTELLIGENT WORKFORCE<br>POWERHOUSE</div>
+    </div></div>
+
+    <div class="shade" id="shade"></div>
+    <div class="say" id="intro">
+      <h1 data-k="introH"><b>The intelligent engine</b><span class="hl" id="hl1">of the field workforce.</span></h1>
+      <p class="lead" data-k="introP">Talo Group connects people, field operations and money across Saudi Arabia and the GCC, in one auditable system.</p>
+    </div>
+
+    <div class="cards">
+      <div class="card c1" data-r="-3"><span class="tape"></span><img src="assets/s-kafd.jpg" alt=""></div>
+      <div class="card c2 navy" data-r="2.5"><span class="tape"></span><img src="assets/s-crane.jpg" alt=""></div>
+      <div class="card c3" data-r="-2"><span class="tape"></span><img src="assets/s-scafOR.jpg" alt=""></div>
+      <div class="card c4 navy" data-r="3"><span class="tape"></span><img src="assets/s-aerialOR.jpg" alt=""></div>
+    </div>
+
+    <div class="say mid" id="land">
+      <h1 data-k="landH"><b>Every great structure</b><span class="hl" id="hl2">starts with its foundation.</span></h1>
+      <p class="lead" data-k="landP">On every site, that foundation is the people who build it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="story" id="story">
+  <div class="sview">
+    <svg class="pat" id="spat"></svg>
+
+    <div class="scene center">
+      <div class="txt">
+        <h2 data-k="s0H"><b>Talo is the foundation</b><span class="hl">of your field workforce.</span></h2>
+        <p class="lead" data-k="s0P">The operating system for temporary field workforce in Saudi Arabia. Plan crews, deploy verified workers, run digital contracts and timesheets, and finance approved invoices in one auditable system.</p>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="ph" data-r="-2.5"><span class="tape"></span><img src="assets/s-scafOR.jpg" alt="Scaffolding on a construction site"></div>
+      <div class="txt">
+        <div class="mname"><img src="assets/iconC-Engine.png" alt="">Talo Engine</div>
+        <h2 data-k="s1H"><b>Plan and match.</b><span class="hl">The right crew, every phase.</span></h2>
+        <p data-k="s1P">AI estimates each crew and matches verified workers by trade, phase and site. Workers deployed in hours, not weeks.</p>
+      </div>
+    </div>
+
+    <div class="scene flip">
+      <div class="ph navyS" data-r="2"><span class="tape"></span><img src="assets/s-crane13.jpg" alt="Tower crane"></div>
+      <div class="txt">
+        <div class="mname"><img src="assets/iconC-Link.png" alt="">Talo Link</div>
+        <h2 data-k="s2H"><b>Verified field talent.</b><span class="hl">Booked when you need it.</span></h2>
+        <p data-k="s2P">Book verified freelancers for short-term needs, with Iqama and permits checked.</p>
+      </div>
+    </div>
+
+    <div class="scene">
+      <div class="ph" data-r="-1.5"><span class="tape"></span><img src="assets/fund-build.jpg" alt="Building under construction">
+        <div class="coins"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="txt">
+        <div class="mname"><img src="assets/iconC-Fund.png" alt="">Talo Fund</div>
+        <h2 data-k="s3H"><b>Liquidity on invoices.</b><span class="hl">Pay wages before clients pay.</span></h2>
+        <p data-k="s3P">Finance approved invoices in the platform, with offers from reviewing funders.</p>
+      </div>
+    </div>
+
+    <div class="scene center last">
+      <div class="txt">
+        <h2 data-k="s4H"><b>Staff every site.</b><span class="hl">Get paid on time.</span></h2>
+        <a class="cta" data-k="cta" href="mailto:hello@talogroup.net">Talk to Talo</a>
+        <small>hello@talogroup.net</small>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="credit" data-k="credit">Sky: real star positions, brightness and colours from the Hipparcos catalogue, with the Milky Way outline (d3-celestial data).</div>
+
+<script>
+{
+  const $ = id => document.getElementById(id);
+  const cine = $('cine'), stage = $('stage'), sky = $('sky'), gw = $('gw'), globe = $('globe');
+  const brand = $('brand'), intro = $('intro'), shade = $('shade');
+  let hl1 = $('hl1'), hl2 = $('hl2');
+  const land = $('land'), site = $('site'), heat = $('heat'), flash = $('flash'), shake = $('shake');
+  const cards = [...document.querySelectorAll('.card')];
+  const cv = $('streaks'), cx = cv.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const clamp = v => Math.min(1, Math.max(0, v));
+  const seg = (p, a, b) => clamp((p - a) / (b - a));
+  const ease = t => t < .5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
+  const easeIn = t => t ** 2.4;
+  const easeOut = t => 1 - (1 - t) ** 3;
+
+  // Warp-line particles for the fall
+  const parts = [];
+  for (let i = 0; i < 260; i++) parts.push({ a: Math.random() * Math.PI * 2, r: Math.random(), s: .4 + Math.random() * .9, w: Math.random() < .15 ? 2 : 1 });
+  function sizeCanvas() {
+    const d = Math.min(devicePixelRatio || 1, 2);
+    cv.width = innerWidth * d; cv.height = innerHeight * d; cx.setTransform(d, 0, 0, d, 0, 0);
+  }
+
+  let target = 0, p = 0;
+  const read = () => {
+    const max = cine.offsetHeight - innerHeight;
+    target = clamp((scrollY - cine.offsetTop) / max);
+  };
+
+  function paint(dt) {
+    // 1) logo out, intro text in
+    const out = ease(seg(p, 0.02, 0.09));
+    brand.style.opacity = 1 - out;
+    brand.style.transform = `translateX(-50%) translateY(${-24 * out}px)`;
+    const tin = ease(seg(p, 0.06, 0.13));
+    const leave = ease(seg(p, 0.345, 0.4));
+    intro.style.opacity = tin * (1 - leave);
+    intro.style.transform = `translateX(-50%) translateY(${24 * (1 - tin) - 160 * leave}px)`;
+    shade.style.opacity = tin * (1 - leave);
+
+    // 2) orange highlight
+    hl1.style.setProperty('--hl', (100 * ease(seg(p, 0.14, 0.2))).toFixed(1) + '%');
+
+    // 3) paper cards drop in, then fly away before the fall
+    cards.forEach((c, i) => {
+      const t = ease(seg(p, 0.2 + i * 0.02, 0.255 + i * 0.02));
+      const r = +c.dataset.r, dir = i % 2 ? 1 : -1;
+      c.style.opacity = t * (1 - leave);
+      c.style.transform = `translateY(${(1 - t) * 40 - leave * 110}vh) rotate(${r + (1 - t) * 10 * dir + leave * 14 * dir}deg)`;
+    });
+
+    // 4) the fall: dive into Saudi Arabia, accelerating
+    const f = seg(p, 0.4, 0.78), fz = easeIn(f);
+    const W = stage.offsetWidth, H = stage.offsetHeight;
+    const s1 = 1.02 + 0.04 * ease(seg(p, 0, 0.39));
+    const s2 = 1 + 7 * fz;
+    const kx = W * 0.53, ky = H * 0.5, bx = W * 0.4975, by = H;
+    gw.style.transform = `translate(${kx}px,${ky}px) scale(${s2}) translate(${-kx}px,${-ky}px) translate(${bx}px,${by}px) scale(${s1}) translate(${-bx}px,${-by}px)`;
+    globe.style.filter = fz > 0.001 ? `blur(${(fz * 2.5).toFixed(2)}px) brightness(${(1 + fz * .2).toFixed(3)})` : 'none';
+    sky.style.transform = `scale(${(1 + fz * 1.2).toFixed(4)})`;
+    sky.style.filter = fz > 0.001 ? `blur(${(fz * 3).toFixed(2)}px)` : 'none';
+    sky.style.opacity = (1 - fz * .6).toFixed(3);
+
+    const heatV = Math.sin(Math.PI * seg(p, 0.5, 0.8));
+    heat.style.opacity = (heatV * 0.95).toFixed(3);
+    $('grain').style.opacity = (0.55 * Math.sin(Math.PI * seg(p, 0.42, 0.82))).toFixed(3);
+    flash.style.opacity = Math.max(0, 1 - Math.abs(p - 0.775) / 0.035).toFixed(3);
+
+    const amp = still ? 0 : 14 * Math.sin(Math.PI * seg(p, 0.48, 0.8)) ** 1.5;
+    shake.style.transform = amp > .1 ? `translate(${((Math.random() - .5) * amp).toFixed(1)}px, ${((Math.random() - .5) * amp).toFixed(1)}px)` : 'none';
+
+    const I = still ? 0 : Math.sin(Math.PI * seg(p, 0.4, 0.8)) * (0.4 + 0.6 * f);
+    const w = innerWidth, h = innerHeight;
+    cx.clearRect(0, 0, w, h);
+    if (I > 0.01) {
+      const vx = w * 0.52, vy = h * 0.5, R = Math.hypot(w, h) * .6;
+      cx.lineCap = 'round';
+      for (const q of parts) {
+        q.r += (0.004 + 0.05 * I) * q.s * dt;
+        if (q.r > 1.1) { q.r = 0.02 + Math.random() * .1; q.a = Math.random() * Math.PI * 2; }
+        const r0 = q.r ** 1.6 * R, r1 = r0 + (30 + 260 * I) * q.s * q.r;
+        const c = Math.cos(q.a), s = Math.sin(q.a);
+        cx.strokeStyle = `rgba(255,${(200 + 55 * (1 - heatV)) | 0},${(170 + 85 * (1 - heatV)) | 0},${Math.min(1, (0.3 + 0.9 * I) * (0.3 + q.r)).toFixed(3)})`;
+        cx.lineWidth = q.w * 1.5;
+        cx.beginPath(); cx.moveTo(vx + c * r0, vy + s * r0); cx.lineTo(vx + c * r1, vy + s * r1); cx.stroke();
+      }
+    }
+
+    // 5) landing on a construction site: the foundation
+    const L = seg(p, 0.64, 0.93);
+    site.style.opacity = ease(seg(p, 0.64, 0.79)).toFixed(3);
+    site.style.transform = `scale(${(1 + 3 * (1 - easeOut(L))).toFixed(4)})`;
+    site.style.filter = p < 0.8 ? `blur(${(4 * (1 - seg(p, 0.64, 0.8))).toFixed(2)}px)` : 'none';
+    const lt = ease(seg(p, 0.86, 0.93));
+    land.style.opacity = lt;
+    land.style.transform = `translate(-50%, calc(-50% + ${(30 * (1 - lt)).toFixed(1)}px))`;
+    hl2.style.setProperty('--hl', (100 * ease(seg(p, 0.92, 0.99))).toFixed(1) + '%');
+  }
+
+  let last = performance.now();
+  function loop(now) {
+    const dt = Math.min(3, (now - last) / 16.7); last = now;
+    p += (target - p) * (still ? 1 : Math.min(1, 0.1 * dt));
+    if (Math.abs(target - p) < 0.0002) p = target;
+    q += (qt - q) * (still ? 1 : Math.min(1, 0.1 * dt));
+    if (Math.abs(qt - q) < 0.0002) q = qt;
+    paint(dt); paintStory();
+    requestAnimationFrame(loop);
+  }
+
+  // Flow pattern: quarter-circle tiles (S=120, r=60), seeded, as in the posters
+  const spat = $('spat');
+  function flow(svg, seed) {
+    const w = svg.clientWidth, h = svg.clientHeight, S = 120, r = 60;
+    let sd = seed; const R = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+    let d = '';
+    for (let y = 0; y < h + S; y += S) for (let x = 0; x < w + S; x += S)
+      d += R() < .5 ? `M${x + r},${y}A${r},${r} 0 0 1 ${x},${y + r}M${x + S},${y + r}A${r},${r} 0 0 0 ${x + r},${y + S}`
+                    : `M${x + r},${y}A${r},${r} 0 0 0 ${x + S},${y + r}M${x},${y + r}A${r},${r} 0 0 1 ${x + r},${y + S}`;
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.innerHTML = `<path d="${d}"/>`;
+  }
+  flow(spat, 682);
+
+  // Story scenes: same behaviour as the intro (text rises, highlight sweeps, paper card drops, then everything leaves)
+  const story = $('story');
+  const scenes = [...document.querySelectorAll('.scene')].map((el, i) => ({
+    el, i, txt: el.querySelector('.txt'), hl: el.querySelector('.hl'), ph: el.querySelector('.ph'),
+    coins: [...el.querySelectorAll('.coins i')], last: el.classList.contains('last'), cta: el.querySelector('.cta')
+  }));
+  let qt = 0, q = 0;
+  const readS = () => { const max = story.offsetHeight - innerHeight; qt = clamp((scrollY - story.offsetTop) / max); };
+  function paintStory() {
+    const N = scenes.length;
+    scenes.forEach(sc => {
+      const t = q * N - sc.i;                         // local time, 0..1 inside this scene
+      const tin = ease(seg(t, -0.05, 0.3));
+      const out = sc.last ? 0 : ease(seg(t, 0.78, 1.0));
+      const vis = tin * (1 - out);
+      sc.el.style.visibility = vis > 0.001 ? 'visible' : 'hidden';
+      sc.txt.style.opacity = vis;
+      sc.txt.style.transform = `translateY(${(28 * (1 - tin) - 140 * out).toFixed(1)}px)`;
+      if (sc.hl) sc.hl.style.setProperty('--hl', (100 * ease(seg(t, 0.2, 0.5))).toFixed(1) + '%');
+      if (sc.ph) {
+        const c = ease(seg(t, 0.1, 0.42)), r = +sc.ph.dataset.r, dir = sc.i % 2 ? 1 : -1;
+        sc.ph.style.opacity = c * (1 - out);
+        sc.ph.style.transform = `translateY(${((1 - c) * 45 - out * 110).toFixed(2)}vh) rotate(${(r + (1 - c) * 10 * dir + out * 14 * dir).toFixed(2)}deg)`;
+      }
+      sc.coins.forEach((k, j) => {
+        const cc = ease(seg(t, 0.4 + j * 0.05, 0.5 + j * 0.05));
+        k.style.opacity = cc; k.style.transform = `translateY(${(-60 * (1 - cc)).toFixed(1)}px)`;
+      });
+      if (sc.cta) sc.cta.style.pointerEvents = vis > .5 ? 'auto' : 'none';
+    });
+  }
+
+  // English / Arabic switch (copy from the Talo one-pagers)
+  const AR = {
+    introH: '<b>المحرّك الذكي</b><span class="hl">للقوى العاملة الميدانية.</span>',
+    introP: 'تالو جروب تربط الناس والعمليات الميدانية والمال في السعودية والخليج، في منظومة واحدة قابلة للتدقيق.',
+    landH: '<b>كل بناء عظيم</b><span class="hl">يبدأ من أساسه.</span>',
+    landP: 'وفي كل موقع، الأساس هم الناس اللي يبنونه.',
+    s0H: '<b>تالو هي الأساس</b><span class="hl">لعمالتك الميدانية.</span>',
+    s0P: 'نظام التشغيل للعمالة الميدانية المؤقتة في السعودية. خطّط للأطقم، وشغّل عمالة موثّقة، وأدِر العقود وكشوف الدوام رقمياً، وموّل الفواتير المعتمدة، في منظومة واحدة قابلة للتدقيق.',
+    s1H: '<b>التخطيط والمطابقة.</b><span class="hl">الطاقم الصح لكل مرحلة.</span>',
+    s1P: 'الذكاء الاصطناعي يقدّر كل طاقم ويطابق عمالة موثّقة حسب المهنة والمرحلة والموقع. عمالة تُشغَّل خلال ساعات، لا أسابيع.',
+    s2H: '<b>كفاءات ميدانية موثّقة.</b><span class="hl">تحجزها وقت ما تحتاجها.</span>',
+    s2P: 'احجز مستقلين موثّقين للاحتياجات القصيرة، مع التحقق من الإقامة والتصاريح.',
+    s3H: '<b>سيولة على الفواتير.</b><span class="hl">رواتبك قبل دفعات عملائك.</span>',
+    s3P: 'موّل الفواتير المعتمدة داخل المنصة، بعروض من ممولين يراجعونها.',
+    s4H: '<b>غطِّ كل موقع بالعمالة.</b><span class="hl">واستلم مستحقاتك في وقتها.</span>',
+    cta: 'تواصل مع تالو',
+    credit: 'السماء: مواقع النجوم ولمعانها وألوانها الحقيقية من كتالوج Hipparcos، مع حدود درب التبانة (بيانات d3-celestial).'
+  };
+  const EN = {};
+  document.querySelectorAll('[data-k]').forEach(el => EN[el.dataset.k] = el.innerHTML);
+  const langBtn = $('lang');
+  function setLang(l) {
+    const T = l === 'ar' ? AR : EN;
+    document.querySelectorAll('[data-k]').forEach(el => { el.innerHTML = T[el.dataset.k]; });
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+    langBtn.textContent = l === 'ar' ? 'English' : 'العربية';
+    // re-link highlight spans for the animations
+    hl1 = document.querySelector('#intro .hl'); hl2 = document.querySelector('#land .hl');
+    scenes.forEach(sc => sc.hl = sc.el.querySelector('.hl'));
+    if (history.replaceState) history.replaceState(null, '', l === 'ar' ? '#ar' : '#en');
+  }
+  langBtn.addEventListener('click', () => setLang(document.documentElement.lang === 'ar' ? 'en' : 'ar'));
+  if (location.hash === '#ar') setLang('ar');
+
+  addEventListener('scroll', () => { read(); readS(); }, { passive: true });
+  addEventListener('resize', () => { sizeCanvas(); read(); readS(); flow(spat, 682); });
+  sizeCanvas(); read(); readS(); p = target; q = qt; requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
