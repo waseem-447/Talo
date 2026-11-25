@@ -16,7 +16,7 @@
   body { overflow-x: clip; font-family: "Gilroy", sans-serif; color: #fff; }
 
   /* ---------- Cinematic part: pinned while you scroll ---------- */
-  .cine { position: relative; height: 1100vh; }
+  .cine { position: relative; height: 1450vh; }
   .view { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
   .shake { position: absolute; inset: 0; will-change: transform; }
 
@@ -42,10 +42,12 @@
   .site { position: absolute; inset: 0; opacity: 0; background: url("assets/site.jpg") center / cover no-repeat; will-change: transform, opacity; }
   .site::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(17,43,78,0) 55%, #112B4E 100%), radial-gradient(ellipse 60% 40% at 50% 50%, rgba(17,43,78,.78), rgba(17,43,78,.35) 70%), linear-gradient(rgba(17,43,78,.6), rgba(17,43,78,.2) 50%, rgba(17,43,78,.6)); }
 
-  .brand { position: absolute; left: 50%; top: max(9vh, 64px); transform: translateX(-50%); }
-  .brand-in { display: flex; align-items: center; gap: 2.2vw; animation: fade 1.6s ease .6s both; }
-  .brand img { height: clamp(56px, 9vw, 130px); }
-  .brand .tag { border-left: 2px solid rgba(255,255,255,.85); padding-left: 1.6vw; font-weight: 800; font-size: clamp(11px, 1.15vw, 18px); line-height: 1.35; letter-spacing: .04em; }
+  /* Opening mark: icon draws itself, pops, then becomes the full Talo Group logo */
+  .brand { position: absolute; left: 50%; top: 42%; width: min(86vw, 1100px); transform: translate(-50%, -50%); direction: ltr; pointer-events: none; }
+  .brand svg { display: block; width: 100%; height: auto; overflow: visible; }
+  #lgRing { fill: none; stroke: #F59E0B; }
+  .lt { fill: #fff; }
+  #lgTag { font-family: "Gilroy", sans-serif; font-weight: 800; fill: #fff; letter-spacing: 2px; }
   @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
   .shade { position: absolute; inset: 0 0 auto 0; height: 45vh; background: linear-gradient(#02040ccc, #02040c00); opacity: 0; pointer-events: none; }
@@ -110,7 +112,6 @@
   html[lang=ar] .hl { background-position: 100% 88%; }
   html[lang=ar] .lead, html[lang=ar] .scene p { line-height: 1.85; }
   html[lang=ar] .mname { letter-spacing: 0; }
-  .brand { direction: ltr; }
 
   @media (max-width: 700px), (orientation: portrait) and (max-width: 1100px) {
     .card { padding: 6px; box-shadow: 9px 9px 0 var(--orange); }
@@ -137,8 +138,6 @@
   /* phones held sideways and other short screens */
   @media (max-height: 520px) and (orientation: landscape) {
     .say { top: 14px; }
-    .brand { top: 16px; }
-    .brand img { height: 48px; }
     .lead { margin-top: 8px; }
     .c1, .c2, .c3, .c4 { top: 50vh; width: 18vw; aspect-ratio: 4/3; }
     .c1 { left: 6vw; } .c2 { left: 30vw; } .c3 { left: 54vw; } .c4 { left: 76vw; }
@@ -168,10 +167,32 @@
       <div class="flash" id="flash"></div>
     </div>
 
-    <div class="brand" id="brand"><div class="brand-in">
-      <img src="assets/Talo-Logo-White.svg" alt="Talo Group">
-      <div class="tag">INTELLIGENT WORKFORCE<br>POWERHOUSE</div>
-    </div></div>
+    <div class="brand" id="brand">
+      <svg id="lgSvg" viewBox="160 60 1960 700" aria-label="Talo Group, Intelligent Workforce Powerhouse" role="img">
+        <defs>
+          <mask id="lgGap" maskUnits="userSpaceOnUse" x="-2000" y="-2000" width="6000" height="6000">
+            <rect x="-2000" y="-2000" width="6000" height="6000" fill="#fff"/>
+            <rect id="lgBand" x="0" y="-40" width="900" height="80" fill="#000"/>
+          </mask>
+          <filter id="lgGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g id="lgPop">
+          <g id="lgLetters">
+            <path class="lt" id="lgT" d="M 418.789062 158.199219 L 220.5 158.199219 L 220.5 241.636719 L 318.019531 241.636719 L 318.019531 537.445312 L 404.675781 537.445312 L 404.675781 241.636719 L 502.195312 241.636719 Z M 418.789062 158.199219 "/>
+            <path class="lt" id="lgA" d="M 685.320312 402 C 685.320312 361.367188 658.234375 335.90625 620.851562 335.90625 C 583.472656 335.90625 556.386719 361.367188 556.386719 402 C 556.386719 442.632812 583.472656 468.09375 620.851562 468.09375 C 658.234375 468.09375 685.320312 442.632812 685.320312 402 M 766.585938 266.558594 L 766.585938 537.441406 L 685.320312 537.441406 L 685.320312 511.980469 C 667.445312 532.566406 640.898438 545.023438 604.601562 545.023438 C 533.628906 545.023438 475.121094 482.722656 475.121094 402 C 475.121094 321.28125 533.628906 258.976562 604.601562 258.976562 C 640.898438 258.976562 667.445312 271.4375 685.320312 292.023438 L 685.320312 266.558594 Z M 766.585938 266.558594 "/>
+            <path class="lt" id="lgL" d="M 826.179688 141.957031 L 907.441406 141.957031 L 907.441406 537.441406 L 826.179688 537.441406 Z M 826.179688 141.957031 "/>
+            <g id="lgGroup"><path class="lt" d="M 951.25 638.195312 C 951.25 657.066406 936.84375 672.8125 913.503906 672.8125 C 889.269531 672.8125 872.40625 654.832031 872.40625 632.5 C 872.40625 610.164062 889.269531 592.183594 913.058594 592.183594 C 927.574219 592.183594 940.191406 599.777344 946.671875 611.054688 L 941.421875 614.183594 C 936.285156 604.355469 925.339844 597.878906 913.058594 597.878906 C 892.507812 597.878906 878.324219 613.289062 878.324219 632.5 C 878.324219 651.707031 892.507812 667.117188 913.503906 667.117188 C 932.488281 667.117188 943.988281 655.390625 945.21875 640.761719 L 912.050781 640.761719 L 912.050781 635.179688 L 951.25 635.179688 Z M 951.25 638.195312 "/><path class="lt" d="M 972.011719 633.949219 L 996.917969 633.949219 C 1006.40625 633.949219 1014.113281 626.132812 1014.113281 616.527344 C 1014.113281 606.8125 1006.40625 598.996094 996.917969 598.996094 L 972.011719 598.996094 Z M 996.691406 639.53125 L 972.011719 639.53125 L 972.011719 671.585938 L 966.09375 671.585938 L 966.09375 593.414062 L 996.917969 593.414062 C 1009.644531 593.414062 1020.035156 603.796875 1020.035156 616.527344 C 1020.035156 627.136719 1012.773438 636.074219 1002.832031 638.753906 L 1022.265625 671.585938 L 1015.453125 671.585938 Z M 996.691406 639.53125 "/><path class="lt" d="M 1104.785156 632.5 C 1104.785156 613.289062 1089.707031 597.878906 1070.386719 597.878906 C 1051.066406 597.878906 1035.988281 613.289062 1035.988281 632.5 C 1035.988281 651.707031 1051.066406 667.117188 1070.386719 667.117188 C 1089.707031 667.117188 1104.785156 651.707031 1104.785156 632.5 M 1030.074219 632.5 C 1030.074219 610.160156 1047.828125 592.183594 1070.386719 592.183594 C 1092.945312 592.183594 1110.703125 610.160156 1110.703125 632.5 C 1110.703125 654.835938 1092.945312 672.8125 1070.386719 672.8125 C 1047.828125 672.8125 1030.074219 654.835938 1030.074219 632.5 "/><path class="lt" d="M 1123.984375 645.453125 L 1123.984375 593.414062 L 1129.898438 593.414062 L 1129.898438 645.453125 C 1129.898438 658.183594 1137.832031 667.117188 1152.570312 667.117188 C 1167.425781 667.117188 1175.351562 658.183594 1175.351562 645.453125 L 1175.351562 593.414062 L 1181.273438 593.414062 L 1181.273438 645.453125 C 1181.273438 661.980469 1169.769531 672.8125 1152.570312 672.8125 C 1135.371094 672.8125 1123.984375 661.980469 1123.984375 645.453125 "/><path class="lt" d="M 1244.582031 617.644531 C 1244.582031 606.8125 1236.875 598.996094 1226.15625 598.996094 L 1205.496094 598.996094 L 1205.496094 636.183594 L 1226.15625 636.183594 C 1236.875 636.183594 1244.582031 628.367188 1244.582031 617.644531 M 1250.5 617.644531 C 1250.5 631.382812 1240.226562 641.769531 1226.15625 641.769531 L 1205.496094 641.769531 L 1205.496094 671.585938 L 1199.578125 671.585938 L 1199.578125 593.414062 L 1226.15625 593.414062 C 1240.226562 593.414062 1250.5 603.796875 1250.5 617.644531 "/></g>
+          </g>
+          <g mask="url(#lgGap)"><circle id="lgRing" cx="1140" cy="413" r="221" stroke-width="158"/></g>
+          <path id="lgO" d="M 1159.359375 402 C 1159.359375 363.535156 1132.269531 338.070312 1097.054688 338.070312 C 1061.839844 338.070312 1034.753906 363.535156 1034.753906 402 C 1034.753906 440.464844 1061.839844 465.929688 1097.054688 465.929688 C 1132.269531 465.929688 1159.359375 440.464844 1159.359375 402 M 953.488281 402 C 953.488281 321.28125 1017.417969 258.976562 1097.054688 258.976562 C 1176.695312 258.976562 1240.621094 321.28125 1240.621094 402 C 1240.621094 482.722656 1176.695312 545.023438 1097.054688 545.023438 C 1017.417969 545.023438 953.488281 482.722656 953.488281 402 " fill="#F59E0B" opacity="0"/>
+          <polygon id="lgArrow" points="1295,93 1456,93 1456,254" fill="#64748B"/>
+          <g id="lgTagG" opacity="0">
+            <rect id="lgDiv" x="1330" y="300" width="6" height="200" fill="#fff"/>
+            <text id="lgTag" x="1385" y="385" font-size="62">INTELLIGENT WORKFORCE<tspan x="1385" dy="84">POWERHOUSE</tspan></text>
+          </g>
+        </g>
+      </svg>
+    </div>
 
     <div class="shade" id="shade"></div>
     <div class="say" id="intro">
@@ -275,11 +296,11 @@
     target = clamp((scrollY - cine.offsetTop) / max);
   };
 
-  function paint(dt) {
+  function paintOld(dt, p) {
     // 1) logo out, intro text in
     const out = ease(seg(p, 0.02, 0.09));
     brand.style.opacity = 1 - out;
-    brand.style.transform = `translateX(-50%) translateY(${-24 * out}px)`;
+    brand.style.transform = `translate(-50%, calc(-50% - ${(60 * out).toFixed(1)}px))`;
     const tin = ease(seg(p, 0.06, 0.13));
     const leave = ease(seg(p, 0.345, 0.4));
     intro.style.opacity = tin * (1 - leave);
@@ -344,6 +365,68 @@
     land.style.transform = `translate(-50%, calc(-50% + ${(30 * (1 - lt)).toFixed(1)}px))`;
     hl2.style.setProperty('--hl', (100 * ease(seg(p, 0.92, 0.99))).toFixed(1) + '%');
   }
+
+  // ---- Opening: icon draws piece by piece, pops, then morphs into the full logo ----
+  const lg = id => document.getElementById(id);
+  const lgRing = lg('lgRing'), lgBand = lg('lgBand'), lgArrow = lg('lgArrow'), lgO = lg('lgO'), lgPop = lg('lgPop');
+  const lgLet = [lg('lgT'), lg('lgA'), lg('lgL')], lgGroup = [...lg('lgGroup').children], lgTagG = lg('lgTagG');
+  const ICON = { cx: 1140, cy: 413, r: 221, w: 158, band: 80, tri: [[1295,93],[1456,93],[1456,254]] };
+  // Narrow screens: tagline goes under the logo so everything stays big enough to read
+  function layoutLogo() {
+    const narrow = innerWidth / innerHeight < 0.9;
+    const svgEl = lg('lgSvg'), tag = lg('lgTag'), div = lg('lgDiv');
+    const cx = narrow ? 735 : 1140;
+    ICON.cx = cx; ICON.tri = [[cx + 155, 93], [cx + 316, 93], [cx + 316, 254]];
+    svgEl.setAttribute('viewBox', narrow ? '190 40 1090 900' : '160 60 1960 700');
+    if (narrow) {
+      div.setAttribute('x', 535); div.setAttribute('y', 742); div.setAttribute('width', 400); div.setAttribute('height', 5);
+      tag.setAttribute('x', 735); tag.setAttribute('y', 830); tag.setAttribute('text-anchor', 'middle'); tag.setAttribute('font-size', 54);
+      tag.querySelector('tspan').setAttribute('x', 735); tag.querySelector('tspan').setAttribute('dy', 70);
+    } else {
+      div.setAttribute('x', 1330); div.setAttribute('y', 300); div.setAttribute('width', 6); div.setAttribute('height', 200);
+      tag.setAttribute('x', 1385); tag.setAttribute('y', 385); tag.setAttribute('text-anchor', 'start'); tag.setAttribute('font-size', 62);
+      tag.querySelector('tspan').setAttribute('x', 1385); tag.querySelector('tspan').setAttribute('dy', 84);
+    }
+  }
+  layoutLogo(); addEventListener('resize', layoutLogo);
+  const LOGO = { cx: 1097.2, cy: 402, r: 102.5, w: 81, band: 0, tri: [[428.2,157.9],[511.9,157.9],[511.9,241.6]] };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const easeBack = t => { const c = 1.6; return 1 + (c + 1) * (t - 1) ** 3 + c * (t - 1) ** 2; };
+  function paintLogo(p) {
+    const draw = seg(p, 0.012, 0.07);                    // ring drawn in 8 steps ("piece by piece")
+    const steps = 8, stepped = Math.min(steps, Math.floor(draw * steps + (draw > 0 ? 1 : 0))) / steps;
+    const ar = ease(seg(p, 0.062, 0.088));                // arrow slides in
+    const pop = seg(p, 0.088, 0.12);                      // pop / emphasis
+    const m = ease(seg(p, 0.125, 0.2));                   // morph into the logo
+    const cx = lerp(ICON.cx, LOGO.cx, m), cy = lerp(ICON.cy, LOGO.cy, m), r = lerp(ICON.r, LOGO.r, m);
+    const C = 2 * Math.PI * r;
+    lgRing.setAttribute('cx', cx); lgRing.setAttribute('cy', cy); lgRing.setAttribute('r', r);
+    lgRing.setAttribute('stroke-width', lerp(ICON.w, LOGO.w, m));
+    lgRing.setAttribute('transform', `rotate(-45 ${cx} ${cy})`);
+    lgRing.style.strokeDasharray = `${C * stepped} ${C}`;
+    lgRing.style.opacity = draw > 0 ? 1 : 0;
+    const bw = lerp(ICON.band, LOGO.band, m);
+    lgBand.setAttribute('y', -bw / 2); lgBand.setAttribute('height', bw);
+    lgBand.setAttribute('transform', `translate(${cx} ${cy}) rotate(-45)`);
+    const done = m > 0.995;
+    lgO.setAttribute('opacity', done ? 1 : 0); lgRing.style.visibility = done ? 'hidden' : 'visible';
+    const pts = ICON.tri.map((q, i) => [lerp(q[0], LOGO.tri[i][0], m), lerp(q[1], LOGO.tri[i][1], m)]);
+    const off = (1 - ar) * 90;
+    lgArrow.setAttribute('points', pts.map(q => `${(q[0] - off).toFixed(1)},${(q[1] + off).toFixed(1)}`).join(' '));
+    lgArrow.style.opacity = ar;
+    const k = 1 + 0.16 * Math.sin(Math.PI * pop);
+    lgPop.setAttribute('transform', `translate(${cx} ${cy}) scale(${k.toFixed(4)}) translate(${-cx} ${-cy})`);
+    lgPop.setAttribute('filter', pop > 0 && pop < 1 ? 'url(#lgGlow)' : '');
+    lgLet.forEach((el, i) => {
+      const t = easeBack(seg(p, 0.15 + i * 0.012, 0.19 + i * 0.012));
+      el.style.opacity = clamp(t); el.style.transform = `translateY(${(60 * (1 - t)).toFixed(1)}px)`;
+    });
+    lgGroup.forEach((el, i) => { el.style.opacity = ease(seg(p, 0.19 + i * 0.005, 0.205 + i * 0.005)); });
+    lgTagG.setAttribute('opacity', ease(seg(p, 0.2, 0.235)).toFixed(3));
+    const tg = ease(seg(p, 0.2, 0.235));
+    lgTagG.setAttribute('transform', ICON.cx === 735 ? `translate(0 ${(30 * (1 - tg)).toFixed(1)})` : `translate(${(-40 * (1 - tg)).toFixed(1)} 0)`);
+  }
+  function paint(dt) { paintLogo(p); paintOld(dt, seg(p, 0.25, 1)); }
 
   let last = performance.now();
   function loop(now) {
