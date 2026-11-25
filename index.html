@@ -48,8 +48,9 @@
   #lgRing { fill: none; stroke: #F59E0B; }
   #lgGuides { opacity: 0; }
   /* Silver arrow that travels with you and points at the words */
-  .ptr { position: fixed; left: 0; top: 0; width: 40px; height: 40px; z-index: 40; pointer-events: none; opacity: 0; will-change: transform, opacity;
+  .ptr { position: fixed; left: 0; top: 0; width: 40px; height: 40px; z-index: 40; pointer-events: none; opacity: 0; will-change: transform, opacity; transform-origin: 50% 50%;
     background: linear-gradient(225deg, #E2E8F0, #94A3B8 55%, #64748B); clip-path: polygon(0 0, 100% 0, 100% 100%); filter: drop-shadow(0 0 10px rgba(226,232,240,.35)); }
+  .ptrTrail { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 39; pointer-events: none; }
   .lt { fill: #fff; }
   #lgTag { font-family: "Gilroy", sans-serif; font-weight: 800; fill: #fff; letter-spacing: 2px; }
   @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -157,7 +158,7 @@
 </head>
 <body>
 <button class="lang" id="lang" type="button">العربية</button>
-<div class="ptr" id="ptr" aria-hidden="true"></div>
+<canvas class="ptrTrail" id="ptrTrail" aria-hidden="true"></canvas><div class="ptr" id="ptr" aria-hidden="true"></div>
 <section class="cine" id="cine">
   <div class="view">
     <div class="shake" id="shake">
@@ -467,7 +468,7 @@
     const pts = ICON.tri.map((q, i) => [lerp(q[0], LOGO.tri[i][0], m), lerp(q[1], LOGO.tri[i][1], m)]);
     const off = (1 - ar) * 140;
     lgArrow.setAttribute('points', pts.map(q => `${(q[0] - off).toFixed(1)},${(q[1] + off).toFixed(1)}`).join(' '));
-    lgArrow.style.opacity = ar * (ptrLive ? 0 : 1);
+    lgArrow.style.opacity = ar;
     const k = 1 + 0.12 * Math.sin(Math.PI * pop) ** 2;
     lgPop.setAttribute('transform', `translate(${cx} ${cy}) scale(${k.toFixed(4)}) translate(${-cx} ${-cy})`);
     lgPop.setAttribute('filter', pop > 0.02 && pop < 0.98 ? 'url(#lgGlow)' : '');
@@ -483,15 +484,18 @@
     lgTagG.setAttribute('transform', ICON.cx === 735 ? `translate(0 ${(30 * (1 - tg)).toFixed(1)})` : `translate(${(-40 * (1 - tg)).toFixed(1)} 0)`);
   }
 
-  // ---- Silver arrow: leaves the logo and travels with you, pointing at the words ----
+  // ---- Silver arrow: leaves the logo and flies with you like a little rocket ----
   const ptr = $('ptr');
-  let ptrLive = false, px = 0, py = 0, ps = 40, po = 0, bob = 0;
+  const trail = $('ptrTrail'), tctx = trail.getContext('2d');
+  let ptrLive = false, px = 0, py = 0, vx = 0, vy = 0, ps = 40, po = 0, ang = 0, bob = 0, wand = 0;
+  const pts = [];
+  function sizeTrail() { const d = Math.min(2, devicePixelRatio || 1); trail.width = innerWidth * d; trail.height = innerHeight * d; tctx.setTransform(d, 0, 0, d, 0, 0); }
+  sizeTrail(); addEventListener('resize', sizeTrail);
   function ptrTarget() {
     const P = seg(p, 0.25, 1), rtl = document.documentElement.dir === 'rtl';
-    const pick = el => { if (!el) return null; const rs = el.getClientRects(); return rs.length ? (rtl ? rs[0] : rs[0]) : null; };
     let el = null;
     if (P > 0.12 && P < 0.36) el = document.querySelector('#intro .hl');
-    else if (P > 0.9 && p >= 0.999 * 0 && q < 0.02) el = document.querySelector('#land .hl');
+    else if (P > 0.9 && q < 0.02) el = document.querySelector('#land .hl');
     if (q > 0.0 && q < 1.0001) {
       const N = scenes.length; const i = Math.min(N - 1, Math.floor(q * N + 0.0001));
       const t = q * N - i;
@@ -499,35 +503,69 @@
       else if (q > 0.001) el = null;
     }
     if (!el) return null;
-    const r = pick(el);
+    const rs = el.getClientRects(); const r = rs.length ? rs[0] : null;
     if (!r || r.width === 0) return null;
     const size = Math.max(26, Math.min(44, r.height * 0.75));
-    return rtl ? { x: r.right + 12, y: r.bottom - size * 0.4, s: size, flip: true } : { x: r.left - 12 - size, y: r.bottom - size * 0.4, s: size, flip: false };
+    // centre of the arrow, plus the point on the words it aims at
+    return rtl ? { x: r.right + 14 + size / 2, y: r.bottom + size * 0.1, s: size, ax: r.right, ay: r.top + r.height * 0.5 }
+               : { x: r.left - 14 - size / 2, y: r.bottom + size * 0.1, s: size, ax: r.left, ay: r.top + r.height * 0.5 };
+  }
+  const wrapA = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
+  function drawTrail() {
+    tctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i - 1], b = pts[i], f = i / pts.length;
+      tctx.strokeStyle = `rgba(${f > 0.6 ? '245,158,11' : '203,213,225'},${(f * f * 0.55 * po).toFixed(3)})`;
+      tctx.lineWidth = Math.max(0.5, ps * 0.18 * f);
+      tctx.lineCap = 'round';
+      tctx.beginPath(); tctx.moveTo(a.x, a.y); tctx.lineTo(b.x, b.y); tctx.stroke();
+    }
   }
   function paintPtr(dt) {
-    if (still) { ptr.style.opacity = 0; return; }
+    if (still) { ptr.style.opacity = 0; trail.style.opacity = 0; return; }
     const P = seg(p, 0.25, 1);
-    const logoDone = p >= 0.245;
-    if (!logoDone) {                                   // still part of the logo
-      if (ptrLive) { ptrLive = false; }
-      ptr.style.opacity = 0;
-      const b = lgArrow.getBoundingClientRect(); px = b.left; py = b.top; ps = b.width; po = 0;
+    if (p < 0.245) {                                   // still part of the logo
+      ptrLive = false; ptr.style.opacity = 0; po = 0; pts.length = 0; drawTrail();
+      const b = lgArrow.getBoundingClientRect(); px = b.left + b.width / 2; py = b.top + b.height / 2; ps = b.width; vx = vy = 0; ang = 0;
       return;
     }
-    if (!ptrLive) { const b = lgArrow.getBoundingClientRect(); px = b.left; py = b.top; ps = b.width; ptrLive = true; }
+    if (!ptrLive) { const b = lgArrow.getBoundingClientRect(); px = b.left + b.width / 2; py = b.top + b.height / 2; ps = b.width; vx = 6; vy = -6; po = 0; ptrLive = true; }
     const T = ptrTarget();
     const falling = P > 0.36 && P < 0.9 && q < 0.001;
+    wand += 0.012 * dt; bob += 0.045 * dt;
     let tx, ty, ts, to;
-    if (T && !falling) { tx = T.x; ty = T.y; ts = T.s; to = 1; }
-    else if (P < 0.12) { const b = lgArrowHome(); tx = b.x; ty = b.y; ts = b.s; to = 1 - ease(seg(P, 0.02, 0.09)) * 0.0; }
-    else { tx = px; ty = py - 20; ts = ps; to = 0; }
-    const k = Math.min(1, 0.09 * dt);
-    px += (tx - px) * k; py += (ty - py) * k; ps += (ts - ps) * k; po += (to - po) * Math.min(1, 0.12 * dt);
-    bob += 0.06 * dt;
-    const nudge = T && !falling ? Math.max(0, Math.sin(bob)) * 6 : 0;   // little "pointing" tap
-    const flip = T && T.flip;
+    if (T && !falling) { tx = T.x + Math.cos(bob) * 3; ty = T.y + Math.sin(bob * 1.3) * 4; ts = T.s; to = 1; }
+    else if (falling) {                                 // rides the dive with you, then fades
+      tx = innerWidth * 0.5 + Math.sin(wand * 3) * innerWidth * 0.12; ty = innerHeight * 0.78; ts = ps; to = 1 - ease(seg(P, 0.5, 0.62));
+    } else {                                            // nothing to point at: cruise freely
+      tx = innerWidth * (0.78 + Math.sin(wand) * 0.1); ty = innerHeight * (0.32 + Math.sin(wand * 1.7) * 0.12); ts = 32; to = 0.85;
+    }
+    // spring + a sideways curl so it flies in arcs, not straight lines
+    const dx = tx - px, dy = ty - py, d = Math.hypot(dx, dy);
+    const K = 0.010, D = 0.13, curl = Math.min(1, d / 400) * 0.0045;
+    vx += (dx * K - dy * curl - vx * D) * dt;
+    vy += (dy * K + dx * curl - vy * D) * dt;
+    const sp = Math.hypot(vx, vy), maxV = 38;
+    if (sp > maxV) { vx *= maxV / sp; vy *= maxV / sp; }
+    px += vx * dt; py += vy * dt;
+    ps += (ts - ps) * Math.min(1, 0.08 * dt);
+    po += (to - po) * Math.min(1, 0.1 * dt);
+    // heading: nose follows velocity when flying, aims at the words when parked
+    const nose = -Math.PI / 4;                           // the triangle's tip points up-right
+    let want;
+    const speed = Math.hypot(vx, vy);
+    const flyA = Math.atan2(vy, vx);
+    if (T && !falling) {
+      const aimA = Math.atan2(T.ay - py, T.ax - px);
+      const m = Math.min(1, speed / 6);
+      want = aimA + wrapA(flyA - aimA) * m;
+    } else want = speed > 0.4 ? flyA : ang + nose;
+    ang += wrapA(want - nose - ang) * Math.min(1, 0.14 * dt);
+    pts.push({ x: px, y: py }); while (pts.length > 22) pts.shift();
+    if (speed < 0.6 && pts.length > 2) pts.shift();
+    drawTrail();
     ptr.style.width = ps.toFixed(1) + 'px'; ptr.style.height = ps.toFixed(1) + 'px';
-    ptr.style.transform = `translate(${(px + (flip ? -nudge : nudge)).toFixed(1)}px, ${(py - nudge).toFixed(1)}px) scaleX(${flip ? -1 : 1})`;
+    ptr.style.transform = `translate(${(px - ps / 2).toFixed(1)}px, ${(py - ps / 2).toFixed(1)}px) rotate(${ang.toFixed(4)}rad)`;
     ptr.style.opacity = po.toFixed(3);
   }
   // while the logo is on screen, the arrow sits on the T (and follows the logo as it leaves)
